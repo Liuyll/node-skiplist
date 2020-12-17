@@ -1,0 +1,22 @@
+{
+  "name": "skiplist",
+  "version": "1.0.0",
+  "description": "JS native skiplist by c++",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib"
+  },
+  "dependencies": {
+    "node-addon-api": "^3.0.2",
+    "bindings": "^1.5.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "node-gyp rebuild",
+    "dev": "node-gyp rebuild && node test.js"
+  },
+  "author": "liuyll",
+  "license": "ISC",
+  "gypfile": true
+}
