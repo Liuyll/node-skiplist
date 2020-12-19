@@ -7,9 +7,11 @@ class JsSkiplist {
     public:
         JsSkiplist(Skiplist skiplist):skiplist(skiplist) {}
         SkiplistNodeData get(SkiplistNodeKey key) {
-            SkiplistNodeData ret = (this->skiplist).get(key);
-            cout<<"qwe"<<endl;
-            if(ret.isNull()) return (SkiplistNodeData)NULL;
+            this->skiplist.test();
+            cout<<"key:"<<key.val<<endl;
+            SkiplistNodeData ret = this->skiplist.get(key);
+            cout<<"qwer"<<endl;
+            if(ret.isNull()) return SkiplistNodeData::getNull();
             return ret;
         }
 };

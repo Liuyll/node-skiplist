@@ -59,10 +59,6 @@ JsSkiplist* getJsSkiplist(
     }
 }
 
-// napi_value JsSkiplist_Get(napi_env env,napi_callback_info info) {
-//     return NULL;
-// }
-
 napi_value createJsSkiplistWrap(napi_env env, JsSkiplist *jsSkiplist) {
     assert(jsSkiplist != nullptr);
     const string jsSkiplistClassName = "Skiplist";
@@ -93,10 +89,12 @@ napi_value createJsSkiplistWrap(napi_env env, JsSkiplist *jsSkiplist) {
 
 napi_value JsBindindBridge(napi_env env, napi_callback_info info) {
     JsSkiplist *jsSkiplist = getJsSkiplist(env, info);
+    SkiplistNodeData data = jsSkiplist->get(SkiplistNodeKey("qwe123"));
+    if(data.isNull()) {
+        cout<<"no"<<endl;
+    }
     return createJsSkiplistWrap(env, jsSkiplist);
 }
-
-
 
 napi_value init(
     napi_env env,

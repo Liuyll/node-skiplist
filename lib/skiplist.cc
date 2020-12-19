@@ -1,4 +1,3 @@
-#include <limits.h>
 #include <random>
 #include <map>
 #include <iostream>
@@ -14,7 +13,7 @@ using namespace std;
 const double MAGIC_MAX_NUMBER = DBL_MAX - 27;
 const string MAGIC_KEY_MAX = "__skiplist_magic_key_max";
 const string MAGIC_KEY_MIN = "__skiplist_magic_key_min";
-const string MAGIC_KEY_NULL = "__skiplist_magic_key_null";    
+const string MAGIC_KEY_NULL = "__skiplist_magic_key_null";
 
 typedef bool(*Compare)(string, string);
 
@@ -59,7 +58,7 @@ struct SkiplistNodeType {
     bool isNull() {
         return this->val == MAGIC_KEY_NULL;
     }
-    bool operator>(const SkiplistNodeType& another) {
+    bool operator>(const SkiplistNodeType& another) const{
         if(this->val == MAGIC_KEY_MAX && another.val != MAGIC_KEY_MAX) return true;
         if(this->compare) return (this->compare(this->val, another.val)) == 1 ? true : false;
         if(this->numberVal != MAGIC_MAX_NUMBER && another.numberVal != MAGIC_MAX_NUMBER) return this->numberVal > another.numberVal;
@@ -69,7 +68,7 @@ struct SkiplistNodeType {
         return false;
     }
 
-    bool operator<(const SkiplistNodeType& another) {
+    bool operator<(const SkiplistNodeType& another) const{
         if(this->val == MAGIC_KEY_MIN && another.val != MAGIC_KEY_MIN) return true;
         if(this->compare != nullptr) return (this->compare(this->val, another.val)) == -1 ? true : false;
         if(this->numberVal != MAGIC_MAX_NUMBER && another.numberVal != MAGIC_MAX_NUMBER) return this->numberVal < another.numberVal;
@@ -79,7 +78,7 @@ struct SkiplistNodeType {
         return false;
     }
 
-    bool operator==(const SkiplistNodeType& another) {
+    bool operator==(const SkiplistNodeType& another) const{
         if(this->compare != nullptr) return !(this->compare(this->val, another.val));
         if(this->numberVal != MAGIC_MAX_NUMBER && another.numberVal != MAGIC_MAX_NUMBER) return this->numberVal == another.numberVal;
         else if(this->numberVal == MAGIC_MAX_NUMBER && another.numberVal == MAGIC_MAX_NUMBER) {
@@ -88,7 +87,7 @@ struct SkiplistNodeType {
         return false;
     }
 
-    bool operator!=(const SkiplistNodeType& another) {
+    bool operator!=(const SkiplistNodeType& another) const{
         if(this->compare != nullptr) return this->compare(this->val, another.val);
         if(this->numberVal != MAGIC_MAX_NUMBER && another.numberVal != MAGIC_MAX_NUMBER) return this->numberVal != another.numberVal;
         else if(this->numberVal == MAGIC_MAX_NUMBER && another.numberVal == MAGIC_MAX_NUMBER) {
@@ -100,6 +99,12 @@ struct SkiplistNodeType {
 
 typedef SkiplistNodeType SkiplistNodeKey ;
 typedef SkiplistNodeType SkiplistNodeData ;
+
+struct SkiplistNodeTypeCompare {
+    bool operator()(const SkiplistNodeKey &A, const SkiplistNodeKey &B) const {
+        return A < B;
+    }
+};
 
 struct SkiplistNode {
     SkiplistNode(SkiplistNodeData data, SkiplistNodeKey key): key(key), data(data) {
@@ -160,6 +165,9 @@ private:
     }
 
 public:
+    void test() {
+        cout<<"i am exist"<<endl;
+    }
     static void insertNode(SkiplistNode *point, SkiplistNode *target) {
         SkiplistNode *temp = point->right;
         point->right = target;
@@ -182,7 +190,7 @@ public:
         }
     }
 
-    Skiplist(map<SkiplistNodeKey ,SkiplistNodeData> datas): head(new SkiplistNode(SkiplistNodeData::getNull(), SkiplistNodeKey::getMin())), tail(new SkiplistNode(SkiplistNodeData::getNull(), SkiplistNodeKey::getMax())) {
+    Skiplist(map<SkiplistNodeKey ,SkiplistNodeData, SkiplistNodeTypeCompare> datas): head(new SkiplistNode(SkiplistNodeData::getNull(), SkiplistNodeKey::getMin())), tail(new SkiplistNode(SkiplistNodeData::getNull(), SkiplistNodeKey::getMax())) {
         new (this)Skiplist();
         for(auto it = datas.begin(); it != datas.end(); it++) {
             insert(it->first, it->second);
@@ -202,7 +210,7 @@ public:
         this->curLayerCount = another.curLayerCount;
     }
 
-    static Skiplist convert(map<SkiplistNodeKey, SkiplistNodeData> datas){
+    static Skiplist convert(map<SkiplistNodeKey, SkiplistNodeData, SkiplistNodeTypeCompare> datas){
         return Skiplist(datas);
     }
 
