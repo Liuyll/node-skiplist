@@ -1,5 +1,5 @@
 const Skiplist = require('bindings')('skiplist').Skiplist
-console.log(Skiplist)
+let skiplist = Skiplist([["qwe","qwe"]])
+skiplist.get(skiplist,"qwe");
 
-Skiplist([["qwe",5]])
 

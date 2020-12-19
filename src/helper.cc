@@ -2,7 +2,8 @@
 #include <string>
 #include <iostream>
 
-using std::cout, std::endl, std::string;
+// using std::cout, std::endl, std::string;
+using namespace std;
 napi_status get_array_property_val(napi_env env, napi_value array, uint32_t index, napi_value *ret) {
     napi_value key;
     napi_status status;
@@ -46,9 +47,53 @@ string get_string(napi_env env,napi_value val) {
     return ret;
 }
 
+string get_string_from_any_type(napi_env env,napi_value val) {
+    napi_status status;
+    napi_valuetype type;
+    string ret;
+
+    status = napi_typeof(env, val, &type);
+    assert(status == napi_ok);
+    switch (type)
+    {
+    case napi_string:
+        ret = get_string(env, val);
+        break;
+    case napi_number:
+        {
+            int temp = get_int32(env, val);
+            ret = to_string(temp);
+        }
+    default:
+        break;
+    }
+    return ret;
+}
+
 bool type_is_array(napi_env env, napi_value val) {
     bool ret;
     napi_status status = napi_is_array(env, val, &ret);
     assert(status == napi_ok);
     return ret;
+}
+
+napi_value* get_args_from_context(napi_env env, napi_callback_info context, size_t *argc) {
+    napi_status status;
+    napi_value argv[1];
+
+    status = napi_get_cb_info(env, context, argc, argv, NULL, NULL);  
+    return argv; 
+}
+
+void get_native_object_from_context(napi_env env, napi_callback_info context, void* target) {
+    napi_status status;
+    size_t argc = 1;
+    napi_value argv[1];
+
+    status = napi_get_cb_info(env, context, &argc, argv, NULL, NULL);   
+    assert(status == napi_ok);
+
+    assert(argc);
+    status = napi_unwrap(env, argv[0], reinterpret_cast<void **>(&target));
+    assert(status == napi_ok);
 }
